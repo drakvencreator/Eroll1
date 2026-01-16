@@ -59,7 +59,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
                     ---------------------------------------------------------------------------------
                  */
                  <img 
-                  src="./logo.png" 
+                  src="/AAGNLAg10so_1767206051182.png" 
                   alt="Auto Japan Erolli" 
                   className="h-20 md:h-28 w-auto object-contain relative z-10 drop-shadow-[0_0_15px_rgba(0,0,0,1)] transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-2 hover-rumble"
                   onError={() => setImgError(true)}
@@ -136,7 +136,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             {/* Logo in Mobile Menu as well */}
             <div className="flex justify-center mb-6 pb-4 border-b border-gray-900">
                {!imgError ? (
-                 <img src="./logo.png" alt="Logo" className="h-24 w-auto animate-pulse" />
+                 <img src="/AAGNLAg10so_1767206051182.png" alt="Logo" className="h-24 w-auto animate-pulse" />
                ) : (
                  <span className="font-aggressive text-3xl text-white">AUTO JAPAN <span className="text-red-600">EROLLI</span></span>
                )}
