@@ -14,8 +14,6 @@ const Footer: React.FC = () => {
           </p>
         </div>
 
-        {/* Social icons removed as requested */}
-
         <div className="text-gray-600 text-xs text-center md:text-right">
           <p>&copy; {new Date().getFullYear()} Auto Japan Erolli. Të gjitha të drejtat e rezervuara.</p>
         </div>

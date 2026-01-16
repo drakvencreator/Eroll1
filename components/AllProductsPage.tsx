@@ -84,7 +84,7 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
   );
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white pt-48 pb-20 relative">
+    <div className="min-h-screen bg-neutral-950 text-white pt-52 pb-20 relative">
       {/* Background Texture */}
       <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
 

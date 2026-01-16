@@ -37,6 +37,9 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
     { name: 'KONTAKTI', href: '#contact' },
   ];
 
+  // User provided logo URL (Direct Link)
+  const LOGO_URL = "https://i.ibb.co/N6XFp1zb/logo.png";
+
   return (
     <nav className="fixed w-full z-50 bg-black/95 border-b-2 border-red-900/50 backdrop-blur-md shadow-[0_5px_30px_rgba(220,38,38,0.2)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,17 +54,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
                <div className="absolute inset-0 bg-red-600 rounded-full blur-3xl opacity-20 group-hover:opacity-60 animate-pulse transition-all duration-500"></div>
                
                {!imgError ? (
-                 /* 
-                    ---------------------------------------------------------------------------------
-                    KUJDES: KETU NDRYSHOHET LOGOJA
-                    Sigurohu qe ke nje foto me emrin "logo.png" ne folderin "public".
-                    Nese fotoja jote e ka emrin ndryshe (psh: mylogo.jpg), ndryshoje "src" me poshte.
-                    ---------------------------------------------------------------------------------
-                 */
                  <img 
-                  src="https://i.ibb.co/N6XFp1zb/logo.png" 
+                  src={LOGO_URL}
                   alt="Auto Japan Erolli" 
-                  className="h-20 md:h-28 w-auto object-contain relative z-10 drop-shadow-[0_0_15px_rgba(0,0,0,1)] transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-2 hover-rumble"
+                  className="h-24 md:h-32 w-auto object-contain relative z-10 drop-shadow-[0_0_15px_rgba(0,0,0,1)] transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-2 hover-rumble"
                   onError={() => setImgError(true)}
                 />
                ) : (
@@ -104,16 +100,16 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
           <div className="hidden md:block">
             <a 
               href={`tel:${'044 136 336'.replace(/\s/g, '')}`}
-              className="relative overflow-hidden bg-red-600 text-white font-bold py-3 px-6 lg:px-8 skew-x-[-12deg] inline-block transition-all hover:scale-105 hover:bg-red-700 hover:shadow-[0_0_25px_rgba(220,38,38,0.8)] cursor-pointer group"
+              className="relative overflow-hidden bg-red-600 text-white font-bold py-2 px-6 lg:px-8 skew-x-[-12deg] inline-block transition-all hover:scale-105 hover:bg-red-700 hover:shadow-[0_0_25px_rgba(220,38,38,0.8)] cursor-pointer group"
             >
               <div className="absolute inset-0 bg-white/30 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-[20deg]"></div>
-              <span className="skew-x-[12deg] inline-block flex items-center gap-2 text-lg">
-                <Phone size={22} className="animate-rumble" /> 
-                <span className="flex flex-col leading-none text-base font-black text-right">
-                  <span>044 136 336</span>
-                  <span>048 136 336</span>
-                </span>
-              </span>
+              <div className="skew-x-[12deg] flex items-center gap-3">
+                <Phone size={24} className="animate-rumble" /> 
+                <div className="flex flex-col items-end leading-none">
+                  <span className="text-lg">044 136 336</span>
+                  <span className="text-lg">048 136 336</span>
+                </div>
+              </div>
             </a>
           </div>
 
@@ -136,7 +132,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
             {/* Logo in Mobile Menu as well */}
             <div className="flex justify-center mb-6 pb-4 border-b border-gray-900">
                {!imgError ? (
-                 <img src="https://i.ibb.co/N6XFp1zb/logo.png" alt="Logo" className="h-24 w-auto animate-pulse" />
+                 <img src={LOGO_URL} alt="Logo" className="h-24 w-auto animate-pulse" />
                ) : (
                  <span className="font-aggressive text-3xl text-white">AUTO JAPAN <span className="text-red-600">EROLLI</span></span>
                )}

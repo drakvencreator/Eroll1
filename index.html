@@ -42,8 +42,8 @@
 
       /* 2. Speed Pan Background */
       @keyframes speed-pan {
-        0% { transform: scale(1.1) translateX(0); }
-        100% { transform: scale(1.2) translateX(-20px); }
+        0% { transform: scale(1.05) translateX(0); }
+        100% { transform: scale(1.15) translateX(-15px); }
       }
       .animate-speed { animation: speed-pan 10s infinite alternate ease-in-out; }
 
@@ -76,13 +76,44 @@
       .animate-slide-left { animation: slide-in-left 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
       .animate-slide-right { animation: slide-in-right 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
       .animate-slide-up { animation: slide-up 0.6s ease-out forwards; }
-
+      
       /* 5. Flash/Pulse */
       @keyframes flash-red {
         0%, 100% { text-shadow: 0 0 10px rgba(220, 38, 38, 0.5); }
         50% { text-shadow: 0 0 25px rgba(220, 38, 38, 1), 0 0 5px rgba(255, 255, 255, 0.5); }
       }
       .animate-flash { animation: flash-red 2s infinite; }
+
+      /* 6. Floating Particles */
+      @keyframes float-1 {
+          0%, 100% { transform: translate(0, 0); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translate(50px, -50px); opacity: 0; }
+      }
+      @keyframes float-2 {
+          0%, 100% { transform: translate(0, 0); opacity: 0; }
+          50% { opacity: 0.8; }
+          100% { transform: translate(-30px, -80px); opacity: 0; }
+      }
+      @keyframes float-3 {
+          0%, 100% { transform: translate(0, 0); opacity: 0; }
+          50% { opacity: 0.6; }
+          100% { transform: translate(20px, -40px); opacity: 0; }
+      }
+      .animate-float-1 { animation: float-1 4s infinite linear; }
+      .animate-float-2 { animation: float-2 6s infinite linear; animation-delay: 1s; }
+      .animate-float-3 { animation: float-3 5s infinite linear; animation-delay: 2s; }
+
+      /* 7. Scanline */
+      .scanline {
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+        background-size: 100% 4px;
+        animation: scanline 10s linear infinite;
+      }
+      @keyframes scanline {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 100%; }
+      }
 
       /* Utilities */
       .text-outline-white { -webkit-text-stroke: 1px white; color: transparent; }
