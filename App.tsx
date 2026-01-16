@@ -14,6 +14,7 @@ type ViewState = 'home' | 'products';
 function App() {
   const [view, setView] = useState<ViewState>('home');
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleAddProduct = (newProduct: Product) => {
     setProducts([newProduct, ...products]);
@@ -23,6 +24,18 @@ function App() {
     if (window.confirm("A jeni i sigurt që doni ta fshini këtë pjesë përgjithmonë?")) {
       setProducts(products.filter(p => p.id !== id));
     }
+  };
+
+  const handleLogin = (code: string): boolean => {
+    if (code === 'LoliEroll1!!') {
+      setIsAdmin(true);
+      return true;
+    }
+    return false;
+  };
+
+  const handleLogout = () => {
+    setIsAdmin(false);
   };
 
   const navigateTo = (newView: ViewState) => {
@@ -52,6 +65,9 @@ function App() {
              onAddProduct={handleAddProduct}
              onDeleteProduct={handleDeleteProduct}
              onBack={() => navigateTo('home')}
+             isAdmin={isAdmin}
+             onLogin={handleLogin}
+             onLogout={handleLogout}
            />
         </main>
       )}

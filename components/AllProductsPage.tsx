@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Upload, X, Trash2, ArrowLeft, Search, ZoomIn } from 'lucide-react';
+import { Plus, Upload, X, Trash2, ArrowLeft, Search, ZoomIn, Lock, Unlock, LogOut } from 'lucide-react';
 import { Product } from '../types';
 
 interface AllProductsPageProps {
@@ -7,12 +7,28 @@ interface AllProductsPageProps {
   onAddProduct: (product: Product) => void;
   onDeleteProduct: (id: string) => void;
   onBack: () => void;
+  isAdmin: boolean;
+  onLogin: (code: string) => boolean;
+  onLogout: () => void;
 }
 
-const AllProductsPage: React.FC<AllProductsPageProps> = ({ products, onAddProduct, onDeleteProduct, onBack }) => {
+const AllProductsPage: React.FC<AllProductsPageProps> = ({ 
+  products, 
+  onAddProduct, 
+  onDeleteProduct, 
+  onBack,
+  isAdmin,
+  onLogin,
+  onLogout
+}) => {
   const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Auth Modal State
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authCode, setAuthCode] = useState('');
+  const [authError, setAuthError] = useState(false);
 
   // Form State
   const [newName, setNewName] = useState('');
@@ -50,6 +66,18 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({ products, onAddProduc
     setIsAdding(false);
   };
 
+  const handleAuthSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const success = onLogin(authCode);
+    if (success) {
+      setIsAuthModalOpen(false);
+      setAuthCode('');
+      setAuthError(false);
+    } else {
+      setAuthError(true);
+    }
+  };
+
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     p.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -79,6 +107,44 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({ products, onAddProduc
          </div>
        )}
 
+       {/* Auth Modal */}
+       {isAuthModalOpen && (
+         <div className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-neutral-900 border-2 border-red-600 p-8 w-full max-w-md relative shadow-[0_0_50px_rgba(220,38,38,0.3)]">
+              <button 
+                onClick={() => { setIsAuthModalOpen(false); setAuthCode(''); setAuthError(false); }}
+                className="absolute top-4 right-4 text-gray-500 hover:text-white"
+              >
+                <X size={24} />
+              </button>
+              
+              <h3 className="font-aggressive text-2xl text-white mb-6 text-center italic">QASJE PËR STAFIN</h3>
+              
+              <form onSubmit={handleAuthSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-red-500 text-xs font-black mb-2 uppercase tracking-wider">Kodi i Autorizimit</label>
+                  <input 
+                    type="password" 
+                    value={authCode}
+                    onChange={(e) => { setAuthCode(e.target.value); setAuthError(false); }}
+                    className="w-full bg-black border border-neutral-700 text-white p-4 focus:outline-none focus:border-red-600 text-center tracking-widest text-xl"
+                    autoFocus
+                    placeholder="••••••••"
+                  />
+                  {authError && <p className="text-red-600 text-xs mt-2 font-bold uppercase text-center animate-pulse">Kodi i pasaktë!</p>}
+                </div>
+                
+                <button 
+                  type="submit" 
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 uppercase tracking-widest transition-colors skew-x-[-12deg]"
+                >
+                  <span className="skew-x-[12deg]">Konfirmo</span>
+                </button>
+              </form>
+            </div>
+         </div>
+       )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
@@ -94,12 +160,15 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({ products, onAddProduc
               <h1 className="font-aggressive text-4xl sm:text-5xl text-white italic leading-none">
                 KATALOGU <span className="text-red-600">KOMPLET</span>
               </h1>
-              <p className="text-gray-400 text-sm mt-1 font-mono">MENAXHIMI I STOKUT</p>
+              <p className="text-gray-400 text-sm mt-1 font-mono flex items-center gap-2">
+                MENAXHIMI I STOKUT
+                {isAdmin && <span className="text-green-500 text-xs border border-green-500 px-2 py-0.5 rounded-full uppercase">Admin Active</span>}
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <div className="relative group">
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
+            <div className="relative group w-full sm:w-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-red-600 transition-colors" size={20} />
               <input 
                 type="text" 
@@ -109,20 +178,40 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({ products, onAddProduc
                 className="bg-neutral-900 border border-neutral-700 text-white pl-10 pr-4 py-3 w-full sm:w-64 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
               />
             </div>
-            <button 
-              onClick={() => setIsAdding(!isAdding)}
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
-            >
-              <span className="skew-x-[12deg] flex items-center gap-2">
-                {isAdding ? <X size={20} /> : <Plus size={20} />}
-                {isAdding ? 'Mbyll' : 'Shto Produkt'}
-              </span>
-            </button>
+            
+            {isAdmin ? (
+              <div className="flex gap-2 w-full sm:w-auto">
+                <button 
+                  onClick={() => setIsAdding(!isAdding)}
+                  className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+                >
+                  <span className="skew-x-[12deg] flex items-center gap-2">
+                    {isAdding ? <X size={20} /> : <Plus size={20} />}
+                    {isAdding ? 'Mbyll' : 'Shto Produkt'}
+                  </span>
+                </button>
+                <button 
+                  onClick={() => { onLogout(); setIsAdding(false); }}
+                  className="bg-neutral-800 hover:bg-neutral-700 text-gray-400 hover:text-white px-4 py-3 skew-x-[-12deg] transition-colors"
+                  title="Dalje nga Admin"
+                >
+                   <LogOut size={20} className="skew-x-[12deg]" />
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setIsAuthModalOpen(true)}
+                className="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-gray-500 hover:text-white px-4 py-3 skew-x-[-12deg] transition-all"
+                title="Qasje Admin"
+              >
+                <Lock size={20} className="skew-x-[12deg]" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Add Product Form */}
-        {isAdding && (
+        {/* Add Product Form - Only Visible if Admin */}
+        {isAdmin && isAdding && (
           <div className="mb-16 bg-black p-8 border-l-8 border-red-600 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-fade-in relative">
             <h3 className="font-aggressive text-3xl text-white mb-8 border-b border-white/10 pb-4">SPECIFIKIMET E REJA</h3>
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -192,14 +281,16 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({ products, onAddProduc
           {filteredProducts.map((product) => (
             <div key={product.id} className="group bg-neutral-900 border border-neutral-800 hover:border-red-600 transition-all duration-300 flex flex-col hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] relative overflow-hidden">
                 
-                {/* Delete Button */}
-                <button 
-                    onClick={(e) => { e.stopPropagation(); onDeleteProduct(product.id); }}
-                    className="absolute top-0 right-0 z-30 bg-red-600 text-white p-3 hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100 translate-x-full group-hover:translate-x-0 duration-300"
-                    title="Fshij Pjesën"
-                >
-                    <Trash2 size={20} />
-                </button>
+                {/* Delete Button - Only Visible if Admin */}
+                {isAdmin && (
+                  <button 
+                      onClick={(e) => { e.stopPropagation(); onDeleteProduct(product.id); }}
+                      className="absolute top-0 right-0 z-30 bg-red-600 text-white p-3 hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100 translate-x-full group-hover:translate-x-0 duration-300"
+                      title="Fshij Pjesën"
+                  >
+                      <Trash2 size={20} />
+                  </button>
+                )}
 
                 <div 
                     className="aspect-square overflow-hidden relative cursor-zoom-in"
