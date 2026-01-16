@@ -1,5 +1,4 @@
 import React from 'react';
-import { Facebook, Instagram } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -15,14 +14,7 @@ const Footer: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex gap-6">
-          <a href="#" className="text-gray-400 hover:text-red-600 transition-colors transform hover:scale-110">
-            <Facebook size={28} />
-          </a>
-          <a href="#" className="text-gray-400 hover:text-red-600 transition-colors transform hover:scale-110">
-            <Instagram size={28} />
-          </a>
-        </div>
+        {/* Social icons removed as requested */}
 
         <div className="text-gray-600 text-xs text-center md:text-right">
           <p>&copy; {new Date().getFullYear()} Auto Japan Erolli. Të gjitha të drejtat e rezervuara.</p>

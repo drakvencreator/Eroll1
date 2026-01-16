@@ -1,3 +1,4 @@
+
 import { Brand, Product } from './types';
 
 export const CAR_BRANDS: Brand[] = [
@@ -56,5 +57,6 @@ export const CONTACT_INFO = {
   phone1: "044 136 336",
   phone2: "048 136 336",
   address: "Rr. Papa Klementi, Pejë",
-  mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2934.349633842187!2d20.2926713!3d42.6540306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDM5JzE0LjUiTiAyMMKwMTcnMzMuNiJF!5e0!3m2!1sen!2s!4v1630000000000!5m2!1sen!2s"
+  // Updated Map Embed URL using specific coordinates for AUTO JAPAN EROLLI
+  mapEmbedUrl: "https://maps.google.com/maps?q=42.6625544,20.3035858&hl=sq&z=17&output=embed"
 };
