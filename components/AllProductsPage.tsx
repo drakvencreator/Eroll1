@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Plus, Upload, X, Trash2, ArrowLeft, Search, ZoomIn, Lock, LogOut, Save, Cloud, Wifi, WifiOff, Database, Settings } from 'lucide-react';
+import { Plus, Upload, X, Trash2, ArrowLeft, Search, ZoomIn, Lock, LogOut, Save, Cloud, Wifi, WifiOff, Database, Settings, UploadCloud } from 'lucide-react';
 import { Product } from '../types';
-import { addProductToCloud, deleteProductFromCloud } from '../firebase';
+import { addProductToCloud, deleteProductFromCloud, uploadBatchProducts } from '../firebase';
+import { INITIAL_PRODUCTS } from '../constants';
 
 interface AllProductsPageProps {
   products: Product[];
@@ -118,7 +119,6 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
   };
 
   const handleDelete = async (id: string) => {
-      // Prompt is handled in parent for local, but we need to handle cloud here
       if (window.confirm("A jeni i sigurt që doni ta fshini këtë pjesë përgjithmonë?")) {
         if (isOnline) {
             try {
@@ -130,6 +130,20 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
             onDeleteProduct(id);
         }
       }
+  };
+
+  const handleInitialUpload = async () => {
+     if (window.confirm("A jeni i sigurt? Kjo do të ngarkojë të gjitha produktet fillestare në Server.")) {
+         setIsUploading(true);
+         try {
+             await uploadBatchProducts(INITIAL_PRODUCTS);
+             alert("Produktet u ngarkuan me sukses në Cloud!");
+         } catch (e) {
+             alert("Gabim gjatë ngarkimit: " + e);
+         } finally {
+             setIsUploading(false);
+         }
+     }
   };
 
   const handleAuthSubmit = (e: React.FormEvent) => {
@@ -176,7 +190,7 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
        {/* Server Config Modal */}
        {isConfigModalOpen && (
          <div className="fixed inset-0 z-[80] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-neutral-900 border-2 border-yellow-500 p-8 w-full max-w-3xl relative shadow-[0_0_100px_rgba(234,179,8,0.3)]">
+            <div className="bg-neutral-900 border-2 border-green-500 p-8 w-full max-w-3xl relative shadow-[0_0_100px_rgba(34,197,94,0.3)]">
                <button 
                 onClick={() => setIsConfigModalOpen(false)}
                 className="absolute top-4 right-4 text-gray-500 hover:text-white"
@@ -184,29 +198,21 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
                 <X size={24} />
               </button>
               
-              <h3 className="font-aggressive text-4xl text-yellow-500 mb-6 italic uppercase flex items-center gap-3">
-                 <Settings className="w-8 h-8" /> KONFIGURIMI I SERVERIT
+              <h3 className="font-aggressive text-4xl text-green-500 mb-6 italic uppercase flex items-center gap-3">
+                 <Settings className="w-8 h-8" /> SERVERI ËSHTË AKTIV
               </h3>
               
               <div className="space-y-4 text-gray-300">
-                  <p className="text-xl font-bold text-white">Për të pasur sinkronizim automatik në të gjitha pajisjet, duhet të lidhni një Databazë (Firebase).</p>
+                  <p className="text-xl font-bold text-white">Lidhja me bazën e të dhënave është e suksesshme!</p>
                   
                   <div className="bg-black/50 p-6 border border-neutral-800 rounded mt-4">
-                      <h4 className="text-yellow-500 font-bold mb-2">UDHËZIMET PËR LIDHJE:</h4>
-                      <ol className="list-decimal pl-5 space-y-2 text-sm font-mono text-gray-400">
-                          <li>Shko te <a href="https://console.firebase.google.com" target="_blank" className="text-blue-400 underline">console.firebase.google.com</a></li>
-                          <li>Krijo një projekt të ri (Falas).</li>
-                          <li>Shko te "Project Settings" -> Krijo "Web App".</li>
-                          <li>Aktivizo "Cloud Firestore" në Database section.</li>
-                          <li>Kopjo "firebaseConfig" nga atje.</li>
-                          <li className="text-white font-bold border-t border-white/20 pt-2 mt-2">Shko te skedari <code className="bg-red-900 px-1">firebase.ts</code> në këtë projekt dhe zëvendëso kodin.</li>
-                      </ol>
+                      <p className="text-green-400 font-mono mb-2">STATUS: ONLINE</p>
+                      <p className="text-gray-400 text-sm">Tani çdo ndryshim që bëni këtu do të shfaqet automatikisht në të gjithë telefonat dhe kompjuterat e tjerë që hapin këtë faqe.</p>
                   </div>
                   
                   <div className="text-center mt-6">
-                      <p className="text-sm text-gray-500 mb-2">Pasi ta bëni këtë hap NJË HERË, gjithçka do të jetë automatike.</p>
-                      <button onClick={() => setIsConfigModalOpen(false)} className="bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-3 px-8 rounded">
-                          Në Rregull, e kuptova
+                      <button onClick={() => setIsConfigModalOpen(false)} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded">
+                          E Kuptova
                       </button>
                   </div>
               </div>
@@ -305,11 +311,11 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
                 {/* SERVER CONFIG BUTTON */}
                 <button 
                   onClick={() => setIsConfigModalOpen(true)}
-                  className={`px-4 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2 ${isOnline ? 'bg-neutral-800 text-gray-400 hover:text-white' : 'bg-yellow-600 hover:bg-yellow-700 text-black animate-pulse'}`}
-                  title="Konfiguro Databazën"
+                  className={`px-4 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2 ${isOnline ? 'bg-neutral-800 text-green-500 border border-green-900' : 'bg-yellow-600 hover:bg-yellow-700 text-black animate-pulse'}`}
+                  title="Statusi i Serverit"
                 >
                     <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Database size={20} /> <span className="hidden lg:inline">{isOnline ? 'KONFIGURUAR' : 'KONFIGURO SERVERIN'}</span>
+                        <Database size={20} /> <span className="hidden lg:inline">{isOnline ? 'SERVERI OK' : 'KONFIGURO SERVERIN'}</span>
                     </span>
                 </button>
 
@@ -468,10 +474,22 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
         </div>
 
         {filteredProducts.length === 0 && (
-            <div className="text-center py-32 border border-neutral-800 bg-neutral-900/50">
-                <p className="font-aggressive text-2xl text-gray-500">
-                    {isOnline ? 'Asnjë produkt në Server. Shto të parin!' : 'Nuk u gjet asnjë produkt.'}
+            <div className="text-center py-32 border border-neutral-800 bg-neutral-900/50 flex flex-col items-center">
+                <p className="font-aggressive text-2xl text-gray-500 mb-6">
+                    {isOnline ? 'Databaza e Serverit është bosh.' : 'Nuk u gjet asnjë produkt.'}
                 </p>
+                {/* INITIAL UPLOAD BUTTON - ONLY IF ONLINE, ADMIN AND EMPTY */}
+                {isOnline && isAdmin && (
+                    <button 
+                        onClick={handleInitialUpload}
+                        disabled={isUploading}
+                        className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 font-black uppercase tracking-widest skew-x-[-12deg] transition-all hover:scale-105 shadow-lg flex items-center gap-3 animate-pulse"
+                    >
+                        <span className="skew-x-[12deg] flex items-center gap-2">
+                           <UploadCloud size={24} /> {isUploading ? 'DUKE NGARKUAR...' : 'NGARKO TË DHËNAT FILLESTARE'}
+                        </span>
+                    </button>
+                )}
             </div>
         )}
 

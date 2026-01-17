@@ -1,12 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, Timestamp, writeBatch } from "firebase/firestore";
 import { Product } from "./types";
 
 // --- KONFIGURIMI I SERVERIT (DATABASE) ---
-// KUJDES: Ti ke vendosur API Key, por App ID dhe Sender ID jane akoma me 00000.
-// DUHET TE KOPJOSH TE GJITHE OBJEKTIN NGA FIREBASE CONSOLE, JO VETEM API KEY.
-
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyD-kLXNqYoSGJ3KcNU55-lBUwTuKvlfsao",
   authDomain: "erolli-fc104.firebaseapp.com",
@@ -22,8 +18,6 @@ let db: any = null;
 let isFirebaseInitialized = false;
 
 try {
-  // Kam hequr kontrollin e vjeter qe e bllokonte lidhjen. 
-  // Tani sistemi do te provoje te lidhet direkt me kodin qe ke vendosur.
   const app = initializeApp(firebaseConfig);
   db = getFirestore(app);
   isFirebaseInitialized = true;
@@ -47,8 +41,12 @@ export const subscribeToProducts = (callback: (products: Product[]) => void) => 
       ...doc.data()
     })) as Product[];
     callback(products);
-  }, (error) => {
+  }, (error: any) => {
     console.error("Error fetching products:", error);
+    // Check for permission error
+    if (error.code === 'permission-denied') {
+        alert("KUJDES: Databaza është e bllokuar nga Google!\n\nShkoni te Firebase Console -> Firestore Database -> Rules\nNdryshoni rreshtin në:\nallow read, write: if true;");
+    }
   });
 
   return unsubscribe;
@@ -68,4 +66,22 @@ export const addProductToCloud = async (product: Product) => {
 export const deleteProductFromCloud = async (id: string) => {
   if (!isFirebaseInitialized || !db) throw new Error("Server offline");
   await deleteDoc(doc(db, "products", id));
+};
+
+// Function to upload multiple products at once (for initialization)
+export const uploadBatchProducts = async (products: Product[]) => {
+    if (!isFirebaseInitialized || !db) throw new Error("Server offline");
+    
+    const batch = writeBatch(db);
+    
+    products.forEach(product => {
+        const docRef = doc(collection(db, "products")); // Auto-ID
+        const { id, ...data } = product;
+        batch.set(docRef, {
+            ...data,
+            createdAt: Timestamp.now()
+        });
+    });
+
+    await batch.commit();
 };
