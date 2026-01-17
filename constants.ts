@@ -19,15 +19,15 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: '2',
-    name: 'Brembo Brake System',
-    description: 'Set frenash qeramikë për Nissan GTR R35. Ndalim i menjëhershëm dhe rezistencë ndaj nxehtësisë.',
-    imageUrl: 'https://images.unsplash.com/photo-1610453363321-3652c64b6339?auto=format&fit=crop&q=80&w=800',
+    name: 'Rear Bull Bar',
+    description: 'Fotrolla e pasme prej çeliku, ultra-reale, e dizajnuar për qëndrueshmëri ekstreme dhe stil agresiv. Çelik i forcuar, shufra industriale të trasha, finish mat me pluhur të zi dhe nyje të dukshme të salduara.',
+    imageUrl: 'https://i.ibb.co/mV12h2xD/Untitled-design-1.jpg',
   },
   {
     id: '3',
-    name: 'KW Suspension V3',
-    description: 'Amortizerë të rregullueshëm (Coilovers) për Honda Civic Type R. Stabilitet perfekt në kthesa.',
-    imageUrl: 'https://images.unsplash.com/photo-1552655307-8e697a23c720?auto=format&fit=crop&q=80&w=800',
+    name: 'Side Step Inox',
+    description: 'Side Step Inox është i ndërtuar nga çelik inox i fortë dhe i qëndrueshëm. Siguron mbrojtje dhe akses më të lehtë në veturë. Veshja inox reziston ndaj ndryshkut dhe konsumimit. Dizajn premium dhe jetëgjatë. I përshtatshëm për vetura japoneze.',
+    imageUrl: 'https://i.ibb.co/tGv3XNM/Untitled-design-2.jpg',
   },
   {
     id: '4',
