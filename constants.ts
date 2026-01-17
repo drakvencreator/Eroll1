@@ -13,9 +13,9 @@ export const APP_VERSION = '1.0.0';
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: '1',
-    name: 'Turbocharger Kit (GReddy Spec)',
-    description: 'Sistem i plotë turbo për performancë maksimale. Përshtatet për motorët RB26 dhe 2JZ.',
-    imageUrl: 'https://images.unsplash.com/photo-1626435013589-32537553f194?auto=format&fit=crop&q=80&w=800',
+    name: 'Front Bull Bear',
+    description: 'Steel Bull Bar është një mbrojtëse e ndërtuar nga çelik i fortë dhe i përforcuar, e projektuar për përdorim serioz dhe kushte të rënda.',
+    imageUrl: 'https://i.ibb.co/m5dqg47B/Untitled-design.jpg',
   },
   {
     id: '2',
