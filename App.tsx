@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -13,8 +13,27 @@ type ViewState = 'home' | 'products';
 
 function App() {
   const [view, setView] = useState<ViewState>('home');
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  
+  // Initialize products from LocalStorage if available, otherwise use INITIAL_PRODUCTS
+  const [products, setProducts] = useState<Product[]>(() => {
+    const savedProducts = localStorage.getItem('auto_japan_products');
+    if (savedProducts) {
+      try {
+        return JSON.parse(savedProducts);
+      } catch (error) {
+        console.error("Error parsing saved products:", error);
+        return INITIAL_PRODUCTS;
+      }
+    }
+    return INITIAL_PRODUCTS;
+  });
+
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // Save to LocalStorage whenever products change
+  useEffect(() => {
+    localStorage.setItem('auto_japan_products', JSON.stringify(products));
+  }, [products]);
 
   const handleAddProduct = (newProduct: Product) => {
     setProducts([newProduct, ...products]);
