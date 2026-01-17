@@ -1,6 +1,10 @@
 
 import { Brand, Product } from './types';
 
+// NDRYSHO KETE NUMER SA HERE QE BEN UPDATE PRODUKTET NE KOD
+// Kjo detyron telefonat/kompjuterat e tjere te marrin te dhënat e reja
+export const APP_VERSION = "1.0"; 
+
 export const CAR_BRANDS: Brand[] = [
   { name: 'NISSAN', category: 'CAR' },
   { name: 'MITSUBISHI', category: 'CAR' },
@@ -17,9 +21,9 @@ export const PART_BRANDS: Brand[] = [
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: '1',
-    name: 'Front Bull Bear',
-    description: 'Steel Bull Bar është i ndërtuar nga çelik i fortë dhe i përforcuar. Ofron mbrojtje maksimale për pjesën e përparme të veturës.',
-    imageUrl: 'https://i.ibb.co/m5dqg47B/Untitled-design.jpg'
+    name: 'Set Pjesësh Frenimi Performance',
+    description: 'Disqe dhe pllaka origjinale për qëndrueshmëri maksimale në rrugë të vështira.',
+    imageUrl: 'https://images.unsplash.com/photo-1626543598506-694df62c5b9c?q=80&w=800&auto=format&fit=crop'
   },
   {
     id: '2',

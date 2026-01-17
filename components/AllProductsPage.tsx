@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Plus, Upload, X, Trash2, ArrowLeft, Search, ZoomIn, Lock, Unlock, LogOut } from 'lucide-react';
+import { Plus, Upload, X, Trash2, ArrowLeft, Search, ZoomIn, Lock, LogOut, Save, Cloud, Wifi, WifiOff, Database, Settings } from 'lucide-react';
 import { Product } from '../types';
+import { addProductToCloud, deleteProductFromCloud } from '../firebase';
 
 interface AllProductsPageProps {
   products: Product[];
@@ -10,6 +11,7 @@ interface AllProductsPageProps {
   isAdmin: boolean;
   onLogin: (code: string) => boolean;
   onLogout: () => void;
+  isOnline: boolean;
 }
 
 const AllProductsPage: React.FC<AllProductsPageProps> = ({ 
@@ -19,7 +21,8 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
   onBack,
   isAdmin,
   onLogin,
-  onLogout
+  onLogout,
+  isOnline
 }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,40 +33,103 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
   const [authCode, setAuthCode] = useState('');
   const [authError, setAuthError] = useState(false);
 
+  // Config Modal State
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+
   // Form State
   const [newName, setNewName] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newImage, setNewImage] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Image Compression
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 600; // Smaller for Firestore limit
+          const scaleSize = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleSize;
+
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          resolve(compressedDataUrl);
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setIsCompressing(true);
+      try {
+        const compressedImage = await compressImage(file);
+        setNewImage(compressedImage);
+      } catch (error) {
+        alert("Gabim gjatë ngarkimit të fotos.");
+      } finally {
+        setIsCompressing(false);
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName || !newDesc || !newImage) return;
 
+    setIsUploading(true);
+
     const newProduct: Product = {
-      id: Date.now().toString(),
+      id: Date.now().toString(), // Temp ID, will be replaced by DB if online
       name: newName,
       description: newDesc,
       imageUrl: newImage
     };
 
-    onAddProduct(newProduct);
-    
-    // Reset form
-    setNewName('');
-    setNewDesc('');
-    setNewImage(null);
-    setIsAdding(false);
+    try {
+        if (isOnline) {
+            await addProductToCloud(newProduct);
+        } else {
+            onAddProduct(newProduct); // Local fallback
+        }
+        
+        // Reset form
+        setNewName('');
+        setNewDesc('');
+        setNewImage(null);
+        setIsAdding(false);
+    } catch (e) {
+        alert("Gabim gjatë ruajtjes në server: " + e);
+    } finally {
+        setIsUploading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+      // Prompt is handled in parent for local, but we need to handle cloud here
+      if (window.confirm("A jeni i sigurt që doni ta fshini këtë pjesë përgjithmonë?")) {
+        if (isOnline) {
+            try {
+                await deleteProductFromCloud(id);
+            } catch (e) {
+                alert("Gabim gjatë fshirjes: " + e);
+            }
+        } else {
+            onDeleteProduct(id);
+        }
+      }
   };
 
   const handleAuthSubmit = (e: React.FormEvent) => {
@@ -88,7 +154,7 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
       {/* Background Texture */}
       <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
 
-      {/* Image Modal / Lightbox */}
+      {/* Image Modal */}
        {selectedImage && (
          <div 
            className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
@@ -103,6 +169,47 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
                 alt="Full Preview" 
                 className="w-full h-auto max-h-[85vh] object-contain border-4 border-red-600 shadow-[0_0_100px_rgba(220,38,38,0.5)]"
               />
+            </div>
+         </div>
+       )}
+
+       {/* Server Config Modal */}
+       {isConfigModalOpen && (
+         <div className="fixed inset-0 z-[80] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-neutral-900 border-2 border-yellow-500 p-8 w-full max-w-3xl relative shadow-[0_0_100px_rgba(234,179,8,0.3)]">
+               <button 
+                onClick={() => setIsConfigModalOpen(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-white"
+              >
+                <X size={24} />
+              </button>
+              
+              <h3 className="font-aggressive text-4xl text-yellow-500 mb-6 italic uppercase flex items-center gap-3">
+                 <Settings className="w-8 h-8" /> KONFIGURIMI I SERVERIT
+              </h3>
+              
+              <div className="space-y-4 text-gray-300">
+                  <p className="text-xl font-bold text-white">Për të pasur sinkronizim automatik në të gjitha pajisjet, duhet të lidhni një Databazë (Firebase).</p>
+                  
+                  <div className="bg-black/50 p-6 border border-neutral-800 rounded mt-4">
+                      <h4 className="text-yellow-500 font-bold mb-2">UDHËZIMET PËR LIDHJE:</h4>
+                      <ol className="list-decimal pl-5 space-y-2 text-sm font-mono text-gray-400">
+                          <li>Shko te <a href="https://console.firebase.google.com" target="_blank" className="text-blue-400 underline">console.firebase.google.com</a></li>
+                          <li>Krijo një projekt të ri (Falas).</li>
+                          <li>Shko te "Project Settings" -> Krijo "Web App".</li>
+                          <li>Aktivizo "Cloud Firestore" në Database section.</li>
+                          <li>Kopjo "firebaseConfig" nga atje.</li>
+                          <li className="text-white font-bold border-t border-white/20 pt-2 mt-2">Shko te skedari <code className="bg-red-900 px-1">firebase.ts</code> në këtë projekt dhe zëvendëso kodin.</li>
+                      </ol>
+                  </div>
+                  
+                  <div className="text-center mt-6">
+                      <p className="text-sm text-gray-500 mb-2">Pasi ta bëni këtë hap NJË HERË, gjithçka do të jetë automatike.</p>
+                      <button onClick={() => setIsConfigModalOpen(false)} className="bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-3 px-8 rounded">
+                          Në Rregull, e kuptova
+                      </button>
+                  </div>
+              </div>
             </div>
          </div>
        )}
@@ -160,10 +267,23 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
               <h1 className="font-aggressive text-4xl sm:text-5xl text-white italic leading-none">
                 KATALOGU <span className="text-red-600">KOMPLET</span>
               </h1>
-              <p className="text-gray-400 text-sm mt-1 font-mono flex items-center gap-2">
-                MENAXHIMI I STOKUT
-                {isAdmin && <span className="text-green-500 text-xs border border-green-500 px-2 py-0.5 rounded-full uppercase">Admin Active</span>}
-              </p>
+              <div className="flex items-center gap-4 mt-1">
+                  <p className="text-gray-400 text-sm font-mono flex items-center gap-2">
+                    MENAXHIMI I STOKUT
+                    {isAdmin && <span className="text-green-500 text-xs border border-green-500 px-2 py-0.5 rounded-full uppercase">Admin Active</span>}
+                  </p>
+                  
+                  {/* Connection Status Indicator */}
+                  {isOnline ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-green-900/30 border border-green-600 rounded text-xs font-bold text-green-500 animate-pulse">
+                          <Wifi size={14} /> CLOUD LIVE
+                      </div>
+                  ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-neutral-800 border border-gray-600 rounded text-xs font-bold text-gray-400" title="Duke përdorur memorien lokale. Konfiguro Serverin për Live Sync.">
+                          <WifiOff size={14} /> LOKALE (OFFLINE)
+                      </div>
+                  )}
+              </div>
             </div>
           </div>
 
@@ -180,14 +300,26 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
             </div>
             
             {isAdmin ? (
-              <div className="flex gap-2 w-full sm:w-auto">
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+                
+                {/* SERVER CONFIG BUTTON */}
+                <button 
+                  onClick={() => setIsConfigModalOpen(true)}
+                  className={`px-4 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2 ${isOnline ? 'bg-neutral-800 text-gray-400 hover:text-white' : 'bg-yellow-600 hover:bg-yellow-700 text-black animate-pulse'}`}
+                  title="Konfiguro Databazën"
+                >
+                    <span className="skew-x-[12deg] flex items-center gap-2">
+                        <Database size={20} /> <span className="hidden lg:inline">{isOnline ? 'KONFIGURUAR' : 'KONFIGURO SERVERIN'}</span>
+                    </span>
+                </button>
+
                 <button 
                   onClick={() => setIsAdding(!isAdding)}
-                  className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
                 >
                   <span className="skew-x-[12deg] flex items-center gap-2">
                     {isAdding ? <X size={20} /> : <Plus size={20} />}
-                    {isAdding ? 'Mbyll' : 'Shto Produkt'}
+                    <span className="hidden sm:inline">{isAdding ? 'Mbyll' : 'Shto Produkt'}</span>
                   </span>
                 </button>
                 <button 
@@ -238,7 +370,9 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
                       required
                     />
                     <div className="flex flex-col items-center justify-center">
-                      {newImage ? (
+                      {isCompressing ? (
+                         <span className="text-yellow-500 font-bold animate-pulse">Duke procesuar foton...</span>
+                      ) : newImage ? (
                          <div className="flex items-center gap-2 text-green-500">
                             <span className="font-bold uppercase">Foto u ngarkua me sukses!</span>
                          </div>
@@ -267,9 +401,12 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
               <div className="flex justify-end pt-4">
                 <button 
                   type="submit" 
-                  className="bg-white hover:bg-gray-200 text-black font-black py-4 px-12 uppercase tracking-widest transition-transform hover:-translate-y-1 skew-x-[-12deg]"
+                  disabled={isCompressing || isUploading}
+                  className={`bg-white hover:bg-gray-200 text-black font-black py-4 px-12 uppercase tracking-widest transition-transform hover:-translate-y-1 skew-x-[-12deg] ${isCompressing || isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <span className="skew-x-[12deg]">Konfirmo Shtimin</span>
+                  <span className="skew-x-[12deg]">
+                      {isUploading ? 'DUKE RUAJTUR NË SERVER...' : 'KONFIRMO SHTIMIN'}
+                  </span>
                 </button>
               </div>
             </form>
@@ -281,14 +418,18 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
           {filteredProducts.map((product) => (
             <div key={product.id} className="group bg-neutral-900 border border-neutral-800 hover:border-red-600 transition-all duration-300 flex flex-col hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] relative overflow-hidden">
                 
-                {/* Delete Button - Only Visible if Admin */}
+                {/* Delete Button - Only Visible if Admin - IMPROVED CLICK AREA */}
                 {isAdmin && (
                   <button 
-                      onClick={(e) => { e.stopPropagation(); onDeleteProduct(product.id); }}
-                      className="absolute top-0 right-0 z-30 bg-red-600 text-white p-3 hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100 translate-x-full group-hover:translate-x-0 duration-300"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        e.preventDefault();
+                        handleDelete(product.id); 
+                      }}
+                      className="absolute top-0 right-0 z-50 bg-red-600 hover:bg-red-800 text-white p-3 transition-colors shadow-lg cursor-pointer"
                       title="Fshij Pjesën"
                   >
-                      <Trash2 size={20} />
+                      <Trash2 size={24} />
                   </button>
                 )}
 
@@ -328,7 +469,9 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
 
         {filteredProducts.length === 0 && (
             <div className="text-center py-32 border border-neutral-800 bg-neutral-900/50">
-                <p className="font-aggressive text-2xl text-gray-500">Nuk u gjet asnjë produkt.</p>
+                <p className="font-aggressive text-2xl text-gray-500">
+                    {isOnline ? 'Asnjë produkt në Server. Shto të parin!' : 'Nuk u gjet asnjë produkt.'}
+                </p>
             </div>
         )}
 
