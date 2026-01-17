@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ArrowLeft, Search, ZoomIn } from 'lucide-react';
+import { X, ArrowLeft, Search, ZoomIn, Info } from 'lucide-react';
 import { Product } from '../types';
 
 interface AllProductsPageProps {
@@ -12,7 +12,8 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
   onBack,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  // Changed from just storing the image string to storing the whole product object
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -24,21 +25,55 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
       {/* Background Texture */}
       <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
 
-      {/* Image Modal */}
-       {selectedImage && (
+      {/* DETAILED PRODUCT MODAL */}
+       {selectedProduct && (
          <div 
            className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
-           onClick={() => setSelectedImage(null)}
+           onClick={() => setSelectedProduct(null)}
          >
-            <div className="relative max-w-6xl w-full">
-              <button className="absolute -top-12 right-0 text-white hover:text-red-600 transition-colors">
-                <X size={40} />
+            <div 
+              className="relative max-w-5xl w-full bg-neutral-900 border border-neutral-800 shadow-[0_0_50px_rgba(220,38,38,0.3)] flex flex-col md:flex-row overflow-hidden"
+              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+            >
+              <button 
+                className="absolute top-4 right-4 z-50 bg-black/50 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+                onClick={() => setSelectedProduct(null)}
+              >
+                <X size={24} />
               </button>
-              <img 
-                src={selectedImage} 
-                alt="Full Preview" 
-                className="w-full h-auto max-h-[85vh] object-contain border-4 border-red-600 shadow-[0_0_100px_rgba(220,38,38,0.5)]"
-              />
+
+              {/* Modal Image Side */}
+              <div className="w-full md:w-1/2 bg-black flex items-center justify-center p-4 border-b md:border-b-0 md:border-r border-neutral-800">
+                <img 
+                  src={selectedProduct.imageUrl} 
+                  alt="Full Preview" 
+                  className="max-h-[50vh] md:max-h-[70vh] w-auto object-contain"
+                />
+              </div>
+
+              {/* Modal Details Side */}
+              <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col overflow-y-auto max-h-[50vh] md:max-h-[70vh]">
+                 <h3 className="font-aggressive text-3xl md:text-4xl text-white italic mb-4 leading-none">
+                    {selectedProduct.name}
+                 </h3>
+                 <div className="w-20 h-1 bg-red-600 mb-8 skew-x-[-12deg]"></div>
+                 
+                 <div className="mb-6">
+                    <span className="text-red-600 font-bold text-xs uppercase tracking-widest block mb-2">SPECIFIKIMET DHE PËRSHKRIMI</span>
+                    <p className="text-gray-300 text-base md:text-lg font-mono leading-relaxed whitespace-pre-wrap">
+                        {selectedProduct.description}
+                    </p>
+                 </div>
+
+                 <div className="mt-auto pt-6 border-t border-neutral-800">
+                    <button 
+                        onClick={() => setSelectedProduct(null)}
+                        className="w-full bg-white hover:bg-gray-200 text-black font-black py-4 uppercase tracking-widest skew-x-[-12deg] transition-transform"
+                    >
+                        <span className="skew-x-[12deg]">MBYLL</span>
+                    </button>
+                 </div>
+              </div>
             </div>
          </div>
        )}
@@ -86,8 +121,8 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
             <div key={product.id} className="group bg-neutral-900 border border-neutral-800 hover:border-red-600 transition-all duration-300 flex flex-col hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] relative overflow-hidden">
                 
                 <div 
-                    className="aspect-square overflow-hidden relative cursor-zoom-in"
-                    onClick={() => setSelectedImage(product.imageUrl)}
+                    className="aspect-square overflow-hidden relative cursor-pointer"
+                    onClick={() => setSelectedProduct(product)}
                 >
                     <img 
                     src={product.imageUrl} 
@@ -102,11 +137,21 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
 
                 <div className="p-5 flex-1 flex flex-col">
                     <div className="mb-auto">
-                        <h3 className="font-aggressive text-xl text-white italic mb-2 leading-tight group-hover:text-red-500 transition-colors">{product.name}</h3>
-                        <p className="text-gray-500 text-xs font-mono line-clamp-3 mb-4">{product.description}</p>
+                        <h3 className="font-aggressive text-xl text-white italic mb-2 leading-tight group-hover:text-red-500 transition-colors cursor-pointer" onClick={() => setSelectedProduct(product)}>{product.name}</h3>
+                        
+                        {/* Short description with ellipsis */}
+                        <p className="text-gray-500 text-xs font-mono line-clamp-3 mb-2">{product.description}</p>
+                        
+                        {/* SEE MORE BUTTON */}
+                        <button 
+                          onClick={() => setSelectedProduct(product)}
+                          className="text-red-500 hover:text-white text-xs font-black uppercase tracking-widest flex items-center gap-1 transition-colors mt-2"
+                        >
+                          + SHIKO MË SHUMË
+                        </button>
                     </div>
                     
-                    <div className="border-t border-neutral-800 pt-4 mt-2 flex justify-between items-center">
+                    <div className="border-t border-neutral-800 pt-4 mt-4 flex justify-between items-center">
                         <span className="text-red-600 font-bold text-xs uppercase tracking-widest">JAPAN SPEC</span>
                         <div className="flex gap-1">
                             <div className="w-1 h-4 bg-red-600 skew-x-[-12deg]"></div>

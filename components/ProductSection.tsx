@@ -8,7 +8,8 @@ interface ProductSectionProps {
 }
 
 const ProductSection: React.FC<ProductSectionProps> = ({ products, onOpenFullCatalog }) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  // Changed to store full product for modal
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Show only first 3 items for preview
   const displayProducts = products.slice(0, 3);
@@ -18,21 +19,45 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products, onOpenFullCat
        {/* Industrial Background */}
        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] opacity-5 pointer-events-none"></div>
        
-       {/* Image Modal / Lightbox */}
-       {selectedImage && (
+       {/* Detailed Product Modal */}
+       {selectedProduct && (
          <div 
            className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-           onClick={() => setSelectedImage(null)}
+           onClick={() => setSelectedProduct(null)}
          >
-            <div className="relative max-w-5xl w-full">
-              <button className="absolute -top-12 right-0 text-white hover:text-red-600 transition-colors">
-                <X size={32} />
+            <div 
+              className="relative max-w-4xl w-full bg-neutral-900 border-2 border-red-600 shadow-[0_0_50px_rgba(220,38,38,0.3)] flex flex-col md:flex-row"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                className="absolute top-2 right-2 z-50 text-white hover:text-red-600 transition-colors bg-black/50 p-1 rounded-full"
+                onClick={() => setSelectedProduct(null)}
+              >
+                <X size={28} />
               </button>
-              <img 
-                src={selectedImage} 
-                alt="Full Preview" 
-                className="w-full h-auto max-h-[80vh] object-contain border-2 border-red-600 shadow-[0_0_50px_rgba(220,38,38,0.3)]"
-              />
+
+              <div className="w-full md:w-1/2 h-64 md:h-auto bg-black relative">
+                 <img 
+                    src={selectedProduct.imageUrl} 
+                    alt="Preview" 
+                    className="w-full h-full object-contain p-2"
+                  />
+              </div>
+
+              <div className="w-full md:w-1/2 p-6 flex flex-col max-h-[60vh] overflow-y-auto">
+                 <h3 className="font-aggressive text-3xl text-white italic mb-4">{selectedProduct.name}</h3>
+                 <p className="text-gray-300 font-mono text-sm leading-relaxed whitespace-pre-wrap">
+                   {selectedProduct.description}
+                 </p>
+                 <div className="mt-8 pt-4 border-t border-neutral-800">
+                    <button 
+                        onClick={() => setSelectedProduct(null)}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 skew-x-[-6deg]"
+                    >
+                        MBYLL
+                    </button>
+                 </div>
+              </div>
             </div>
          </div>
        )}
@@ -63,7 +88,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products, onOpenFullCat
             <div 
               key={product.id} 
               className="group relative bg-black border border-neutral-800 hover:border-red-600 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_20px_rgba(220,38,38,0.2)] cursor-pointer"
-              onClick={() => setSelectedImage(product.imageUrl)}
+              onClick={() => setSelectedProduct(product)}
             >
               <div className="aspect-[4/3] overflow-hidden relative border-b border-neutral-800">
                 <img 
@@ -87,9 +112,16 @@ const ProductSection: React.FC<ProductSectionProps> = ({ products, onOpenFullCat
               <div className="p-6">
                 <h3 className="font-aggressive text-2xl text-white italic mb-2 leading-tight">{product.name}</h3>
                 <div className="w-12 h-1 bg-red-600 mb-4"></div>
-                <p className="text-gray-400 text-sm leading-relaxed mb-4 min-h-[3rem] font-mono">
+                
+                <p className="text-gray-400 text-sm leading-relaxed mb-2 min-h-[3rem] font-mono line-clamp-3">
                   {product.description}
                 </p>
+
+                <button 
+                  className="text-red-500 font-bold text-xs uppercase tracking-widest hover:text-white transition-colors"
+                >
+                  + SHIKO MË SHUMË
+                </button>
               </div>
             </div>
           ))}
