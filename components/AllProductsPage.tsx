@@ -1,162 +1,18 @@
 import React, { useState } from 'react';
-import { Plus, Upload, X, Trash2, ArrowLeft, Search, ZoomIn, Lock, LogOut, Save, Cloud, Wifi, WifiOff, Database, Settings, UploadCloud } from 'lucide-react';
+import { X, ArrowLeft, Search, ZoomIn } from 'lucide-react';
 import { Product } from '../types';
-import { addProductToCloud, deleteProductFromCloud, uploadBatchProducts } from '../firebase';
-import { INITIAL_PRODUCTS } from '../constants';
 
 interface AllProductsPageProps {
   products: Product[];
-  onAddProduct: (product: Product) => void;
-  onDeleteProduct: (id: string) => void;
   onBack: () => void;
-  isAdmin: boolean;
-  onLogin: (code: string) => boolean;
-  onLogout: () => void;
-  isOnline: boolean;
 }
 
 const AllProductsPage: React.FC<AllProductsPageProps> = ({ 
   products, 
-  onAddProduct, 
-  onDeleteProduct, 
   onBack,
-  isAdmin,
-  onLogin,
-  onLogout,
-  isOnline
 }) => {
-  const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-  // Auth Modal State
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authCode, setAuthCode] = useState('');
-  const [authError, setAuthError] = useState(false);
-
-  // Config Modal State
-  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
-
-  // Form State
-  const [newName, setNewName] = useState('');
-  const [newDesc, setNewDesc] = useState('');
-  const [newImage, setNewImage] = useState<string | null>(null);
-  const [isCompressing, setIsCompressing] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-
-  // Image Compression
-  const compressImage = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target?.result as string;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 600; // Smaller for Firestore limit
-          const scaleSize = MAX_WIDTH / img.width;
-          canvas.width = MAX_WIDTH;
-          canvas.height = img.height * scaleSize;
-
-          const ctx = canvas.getContext('2d');
-          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-          
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
-          resolve(compressedDataUrl);
-        };
-        img.onerror = (err) => reject(err);
-      };
-      reader.onerror = (err) => reject(err);
-    });
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setIsCompressing(true);
-      try {
-        const compressedImage = await compressImage(file);
-        setNewImage(compressedImage);
-      } catch (error) {
-        alert("Gabim gjatë ngarkimit të fotos.");
-      } finally {
-        setIsCompressing(false);
-      }
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newName || !newDesc || !newImage) return;
-
-    setIsUploading(true);
-
-    const newProduct: Product = {
-      id: Date.now().toString(), // Temp ID, will be replaced by DB if online
-      name: newName,
-      description: newDesc,
-      imageUrl: newImage
-    };
-
-    try {
-        if (isOnline) {
-            await addProductToCloud(newProduct);
-        } else {
-            onAddProduct(newProduct); // Local fallback
-        }
-        
-        // Reset form
-        setNewName('');
-        setNewDesc('');
-        setNewImage(null);
-        setIsAdding(false);
-    } catch (e) {
-        alert("Gabim gjatë ruajtjes në server: " + e);
-    } finally {
-        setIsUploading(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-      if (window.confirm("A jeni i sigurt që doni ta fshini këtë pjesë përgjithmonë?")) {
-        if (isOnline) {
-            try {
-                await deleteProductFromCloud(id);
-            } catch (e) {
-                alert("Gabim gjatë fshirjes: " + e);
-            }
-        } else {
-            onDeleteProduct(id);
-        }
-      }
-  };
-
-  const handleInitialUpload = async () => {
-     if (window.confirm("A jeni i sigurt? Kjo do të ngarkojë të gjitha produktet fillestare në Server.")) {
-         setIsUploading(true);
-         try {
-             await uploadBatchProducts(INITIAL_PRODUCTS);
-             alert("Produktet u ngarkuan me sukses në Cloud!");
-         } catch (e) {
-             alert("Gabim gjatë ngarkimit: " + e);
-         } finally {
-             setIsUploading(false);
-         }
-     }
-  };
-
-  const handleAuthSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const success = onLogin(authCode);
-    if (success) {
-      setIsAuthModalOpen(false);
-      setAuthCode('');
-      setAuthError(false);
-    } else {
-      setAuthError(true);
-    }
-  };
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -187,77 +43,6 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
          </div>
        )}
 
-       {/* Server Config Modal */}
-       {isConfigModalOpen && (
-         <div className="fixed inset-0 z-[80] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-neutral-900 border-2 border-green-500 p-8 w-full max-w-3xl relative shadow-[0_0_100px_rgba(34,197,94,0.3)]">
-               <button 
-                onClick={() => setIsConfigModalOpen(false)}
-                className="absolute top-4 right-4 text-gray-500 hover:text-white"
-              >
-                <X size={24} />
-              </button>
-              
-              <h3 className="font-aggressive text-4xl text-green-500 mb-6 italic uppercase flex items-center gap-3">
-                 <Settings className="w-8 h-8" /> SERVERI ËSHTË AKTIV
-              </h3>
-              
-              <div className="space-y-4 text-gray-300">
-                  <p className="text-xl font-bold text-white">Lidhja me bazën e të dhënave është e suksesshme!</p>
-                  
-                  <div className="bg-black/50 p-6 border border-neutral-800 rounded mt-4">
-                      <p className="text-green-400 font-mono mb-2">STATUS: ONLINE</p>
-                      <p className="text-gray-400 text-sm">Tani çdo ndryshim që bëni këtu do të shfaqet automatikisht në të gjithë telefonat dhe kompjuterat e tjerë që hapin këtë faqe.</p>
-                  </div>
-                  
-                  <div className="text-center mt-6">
-                      <button onClick={() => setIsConfigModalOpen(false)} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded">
-                          E Kuptova
-                      </button>
-                  </div>
-              </div>
-            </div>
-         </div>
-       )}
-
-       {/* Auth Modal */}
-       {isAuthModalOpen && (
-         <div className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-neutral-900 border-2 border-red-600 p-8 w-full max-w-md relative shadow-[0_0_50px_rgba(220,38,38,0.3)]">
-              <button 
-                onClick={() => { setIsAuthModalOpen(false); setAuthCode(''); setAuthError(false); }}
-                className="absolute top-4 right-4 text-gray-500 hover:text-white"
-              >
-                <X size={24} />
-              </button>
-              
-              <h3 className="font-aggressive text-2xl text-white mb-6 text-center italic">QASJE PËR STAFIN</h3>
-              
-              <form onSubmit={handleAuthSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-red-500 text-xs font-black mb-2 uppercase tracking-wider">Kodi i Autorizimit</label>
-                  <input 
-                    type="password" 
-                    value={authCode}
-                    onChange={(e) => { setAuthCode(e.target.value); setAuthError(false); }}
-                    className="w-full bg-black border border-neutral-700 text-white p-4 focus:outline-none focus:border-red-600 text-center tracking-widest text-xl"
-                    autoFocus
-                    placeholder="••••••••"
-                  />
-                  {authError && <p className="text-red-600 text-xs mt-2 font-bold uppercase text-center animate-pulse">Kodi i pasaktë!</p>}
-                </div>
-                
-                <button 
-                  type="submit" 
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 uppercase tracking-widest transition-colors skew-x-[-12deg]"
-                >
-                  <span className="skew-x-[12deg]">Konfirmo</span>
-                </button>
-              </form>
-            </div>
-         </div>
-       )}
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
@@ -276,19 +61,7 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
               <div className="flex items-center gap-4 mt-1">
                   <p className="text-gray-400 text-sm font-mono flex items-center gap-2">
                     MENAXHIMI I STOKUT
-                    {isAdmin && <span className="text-green-500 text-xs border border-green-500 px-2 py-0.5 rounded-full uppercase">Admin Active</span>}
                   </p>
-                  
-                  {/* Connection Status Indicator */}
-                  {isOnline ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1 bg-green-900/30 border border-green-600 rounded text-xs font-bold text-green-500 animate-pulse">
-                          <Wifi size={14} /> CLOUD LIVE
-                      </div>
-                  ) : (
-                      <div className="flex items-center gap-1.5 px-3 py-1 bg-neutral-800 border border-gray-600 rounded text-xs font-bold text-gray-400" title="Duke përdorur memorien lokale. Konfiguro Serverin për Live Sync.">
-                          <WifiOff size={14} /> LOKALE (OFFLINE)
-                      </div>
-                  )}
               </div>
             </div>
           </div>
@@ -304,141 +77,14 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
                 className="bg-neutral-900 border border-neutral-700 text-white pl-10 pr-4 py-3 w-full sm:w-64 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
               />
             </div>
-            
-            {isAdmin ? (
-              <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
-                
-                {/* SERVER CONFIG BUTTON */}
-                <button 
-                  onClick={() => setIsConfigModalOpen(true)}
-                  className={`px-4 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2 ${isOnline ? 'bg-neutral-800 text-green-500 border border-green-900' : 'bg-yellow-600 hover:bg-yellow-700 text-black animate-pulse'}`}
-                  title="Statusi i Serverit"
-                >
-                    <span className="skew-x-[12deg] flex items-center gap-2">
-                        <Database size={20} /> <span className="hidden lg:inline">{isOnline ? 'SERVERI OK' : 'KONFIGURO SERVERIN'}</span>
-                    </span>
-                </button>
-
-                <button 
-                  onClick={() => setIsAdding(!isAdding)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-black uppercase tracking-widest skew-x-[-12deg] transition-transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
-                >
-                  <span className="skew-x-[12deg] flex items-center gap-2">
-                    {isAdding ? <X size={20} /> : <Plus size={20} />}
-                    <span className="hidden sm:inline">{isAdding ? 'Mbyll' : 'Shto Produkt'}</span>
-                  </span>
-                </button>
-                <button 
-                  onClick={() => { onLogout(); setIsAdding(false); }}
-                  className="bg-neutral-800 hover:bg-neutral-700 text-gray-400 hover:text-white px-4 py-3 skew-x-[-12deg] transition-colors"
-                  title="Dalje nga Admin"
-                >
-                   <LogOut size={20} className="skew-x-[12deg]" />
-                </button>
-              </div>
-            ) : (
-              <button 
-                onClick={() => setIsAuthModalOpen(true)}
-                className="bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-gray-500 hover:text-white px-4 py-3 skew-x-[-12deg] transition-all"
-                title="Qasje Admin"
-              >
-                <Lock size={20} className="skew-x-[12deg]" />
-              </button>
-            )}
           </div>
         </div>
-
-        {/* Add Product Form - Only Visible if Admin */}
-        {isAdmin && isAdding && (
-          <div className="mb-16 bg-black p-8 border-l-8 border-red-600 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-fade-in relative">
-            <h3 className="font-aggressive text-3xl text-white mb-8 border-b border-white/10 pb-4">SPECIFIKIMET E REJA</h3>
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <label className="block text-red-500 text-sm font-black mb-3 uppercase tracking-wider">Emri i Pjesës</label>
-                  <input 
-                    type="text" 
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    className="w-full bg-neutral-900/50 border border-neutral-600 text-white p-4 focus:outline-none focus:border-red-600 focus:bg-neutral-900 transition-all font-bold text-lg"
-                    placeholder="psh. Turbocharger GReddy T88..."
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-red-500 text-sm font-black mb-3 uppercase tracking-wider">Foto e Produktit</label>
-                  <div className="relative border-2 border-dashed border-neutral-600 bg-neutral-900/30 p-8 text-center cursor-pointer hover:border-red-600 hover:bg-neutral-900 transition-all group h-[140px] flex items-center justify-center">
-                    <input 
-                      type="file" 
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      required
-                    />
-                    <div className="flex flex-col items-center justify-center">
-                      {isCompressing ? (
-                         <span className="text-yellow-500 font-bold animate-pulse">Duke procesuar foton...</span>
-                      ) : newImage ? (
-                         <div className="flex items-center gap-2 text-green-500">
-                            <span className="font-bold uppercase">Foto u ngarkua me sukses!</span>
-                         </div>
-                      ) : (
-                        <>
-                            <Upload className="text-gray-400 group-hover:text-red-500 mb-2 transition-colors" size={32} />
-                            <span className="text-sm text-gray-400 uppercase font-bold group-hover:text-white">Kliko për ngarkim</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-red-500 text-sm font-black mb-3 uppercase tracking-wider">Përshkrimi Teknik</label>
-                <textarea 
-                  value={newDesc}
-                  onChange={(e) => setNewDesc(e.target.value)}
-                  className="w-full bg-neutral-900/50 border border-neutral-600 text-white p-4 focus:outline-none focus:border-red-600 focus:bg-neutral-900 h-32 font-mono text-sm transition-all"
-                  placeholder="Shkruaj detajet teknike këtu..."
-                  required
-                ></textarea>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <button 
-                  type="submit" 
-                  disabled={isCompressing || isUploading}
-                  className={`bg-white hover:bg-gray-200 text-black font-black py-4 px-12 uppercase tracking-widest transition-transform hover:-translate-y-1 skew-x-[-12deg] ${isCompressing || isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <span className="skew-x-[12deg]">
-                      {isUploading ? 'DUKE RUAJTUR NË SERVER...' : 'KONFIRMO SHTIMIN'}
-                  </span>
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <div key={product.id} className="group bg-neutral-900 border border-neutral-800 hover:border-red-600 transition-all duration-300 flex flex-col hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] relative overflow-hidden">
                 
-                {/* Delete Button - Only Visible if Admin - IMPROVED CLICK AREA */}
-                {isAdmin && (
-                  <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        e.preventDefault();
-                        handleDelete(product.id); 
-                      }}
-                      className="absolute top-0 right-0 z-50 bg-red-600 hover:bg-red-800 text-white p-3 transition-colors shadow-lg cursor-pointer"
-                      title="Fshij Pjesën"
-                  >
-                      <Trash2 size={24} />
-                  </button>
-                )}
-
                 <div 
                     className="aspect-square overflow-hidden relative cursor-zoom-in"
                     onClick={() => setSelectedImage(product.imageUrl)}
@@ -476,20 +122,11 @@ const AllProductsPage: React.FC<AllProductsPageProps> = ({
         {filteredProducts.length === 0 && (
             <div className="text-center py-32 border border-neutral-800 bg-neutral-900/50 flex flex-col items-center">
                 <p className="font-aggressive text-2xl text-gray-500 mb-6">
-                    {isOnline ? 'Databaza e Serverit është bosh.' : 'Nuk u gjet asnjë produkt.'}
+                    Nuk u gjet asnjë produkt.
                 </p>
-                {/* INITIAL UPLOAD BUTTON - ONLY IF ONLINE, ADMIN AND EMPTY */}
-                {isOnline && isAdmin && (
-                    <button 
-                        onClick={handleInitialUpload}
-                        disabled={isUploading}
-                        className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 font-black uppercase tracking-widest skew-x-[-12deg] transition-all hover:scale-105 shadow-lg flex items-center gap-3 animate-pulse"
-                    >
-                        <span className="skew-x-[12deg] flex items-center gap-2">
-                           <UploadCloud size={24} /> {isUploading ? 'DUKE NGARKUAR...' : 'NGARKO TË DHËNAT FILLESTARE'}
-                        </span>
-                    </button>
-                )}
+                <p className="text-gray-500">
+                    Shto produkte manualisht në skedarin <code className="text-red-500">constants.ts</code>
+                </p>
             </div>
         )}
 
