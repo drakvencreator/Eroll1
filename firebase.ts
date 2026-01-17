@@ -3,20 +3,18 @@ import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, or
 import { Product } from "./types";
 
 // --- KONFIGURIMI I SERVERIT (DATABASE) ---
-// Hapi 1: Shko ne https://console.firebase.google.com/
-// Hapi 2: Krijo projekt te ri (Falas)
-// Hapi 3: Krijo Web App dhe kopjo 'firebaseConfig'
-// Hapi 4: Zevendesoje kodin me poshte me kodin tend:
+// KUJDES: Ti ke vendosur API Key, por App ID dhe Sender ID jane akoma me 00000.
+// DUHET TE KOPJOSH TE GJITHE OBJEKTIN NGA FIREBASE CONSOLE, JO VETEM API KEY.
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  // --- VENDOS KODIN TEND KETU POSHTE ---
   apiKey: "AIzaSyD-kLXNqYoSGJ3KcNU55-lBUwTuKvlfsao",
-  authDomain: "auto-japan-erolli.firebaseapp.com",
-  projectId: "auto-japan-erolli",
-  storageBucket: "auto-japan-erolli.appspot.com",
-  messagingSenderId: "00000000000",
-  appId: "1:00000000000:web:00000000000000"
-  // ---------------------------------------
+  authDomain: "erolli-fc104.firebaseapp.com",
+  projectId: "erolli-fc104",
+  storageBucket: "erolli-fc104.firebasestorage.app",
+  messagingSenderId: "595099730011",
+  appId: "1:595099730011:web:7a4268bd044c12a5f07f7e",
+  measurementId: "G-J3KW0CZNWQ"
 };
 
 // Initialize Firebase Logic
@@ -24,17 +22,15 @@ let db: any = null;
 let isFirebaseInitialized = false;
 
 try {
-  // Check if config is real (user has updated it)
-  if (firebaseConfig.apiKey !== "AIzaSyD-kLXNqYoSGJ3KcNU55-lBUwTuKvlfsao") {
-    const app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    isFirebaseInitialized = true;
-    console.log("🔥 SERVER STATUS: ONLINE (Connected to Firebase)");
-  } else {
-    console.warn("⚠️ SERVER STATUS: OFFLINE (Using Local Storage)");
-  }
+  // Kam hequr kontrollin e vjeter qe e bllokonte lidhjen. 
+  // Tani sistemi do te provoje te lidhet direkt me kodin qe ke vendosur.
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  isFirebaseInitialized = true;
+  console.log("🔥 SERVER STATUS: ONLINE (Connected to Firebase)");
 } catch (error) {
   console.error("Firebase init failed:", error);
+  console.warn("⚠️ SERVER STATUS: OFFLINE (Check Config)");
 }
 
 // Helpers
