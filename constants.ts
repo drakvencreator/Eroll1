@@ -37,9 +37,9 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: '5',
-    name: 'Volk Racing TE37 (19")',
-    description: 'Fellne legjendare japoneze. Të lehta dhe jashtëzakonisht të forta. Bronze finish.',
-    imageUrl: 'https://images.unsplash.com/photo-1578844251758-2f71da645217?auto=format&fit=crop&q=80&w=800',
+    name: 'Rear Lamp Ford Ranger T6',
+    description: 'Rear Lamp Ford Ranger T6 ofron ndriçim të fuqishëm dhe të qartë për siguri maksimale gjatë drejtimit. E prodhuar nga materiale cilësore dhe rezistente, garanton jetëgjatësi dhe përputhshmëri të plotë me modelin Ford Ranger T6. Dizajn modern që ruan pamjen origjinale të automjetit dhe siguron dukshmëri optimale në çdo kusht.',
+    imageUrl: 'https://gtconcepts.co.za/cdn/shop/files/website_84ba723f-7c9e-4eec-9a30-39f7dbb346b3.png?v=1716537821&width=1500',
   },
   {
     id: '6',
