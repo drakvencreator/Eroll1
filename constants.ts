@@ -43,9 +43,9 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: '6',
-    name: 'Mishimoto Intercooler',
-    description: 'Ftohës ajri me kapacitet të lartë për Mitsubishi Lancer Evo X. Mban temperaturat e motorit të ulëta.',
-    imageUrl: 'https://images.unsplash.com/photo-1517524008697-592031913d56?auto=format&fit=crop&q=80&w=800',
+    name: 'Spring Leaf Mitsubishi L200 K77',
+    description: 'Spring Leaf Mitsubishi L200 K77 është komponent thelbësor i sistemit të pezullimit, i projektuar për të ofruar qëndrueshmëri, kapacitet të lartë mbajtës dhe komoditet gjatë ngarkesës. I prodhuar nga çelik rezistent, siguron performancë të besueshme, jetëgjatësi dhe përshtatje të saktë për modelin Mitsubishi L200 K77, ideal për përdorim të përditshëm dhe kushte të vështira pune.',
+    imageUrl: 'https://www.4x4parts.fi/40936-large_default/leaf-spring-rear-mitsubishi-l200.jpg',
   },
   // SHTO PRODUKTE TE REJA POSHTE KETIJ RRESHTI
   // {
