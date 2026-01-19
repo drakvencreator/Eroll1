@@ -1,13 +1,11 @@
+
 import { Brand, Product } from './types';
 
 export const APP_VERSION = '1.0.0';
 
-// ==================================================================================
-//  TIKTOK INTRO VIDEO
-// ==================================================================================
-// Shko te videoja jote në TikTok dhe gjej ID-në (numrat në fund të linkut).
-// Psh: https://www.tiktok.com/@autojapan.erolli/video/73684123456789 -> ID është 73684123456789
-export const TIKTOK_VIDEO_ID = "7596453474850606347"; // Zëvendësoje këtë me ID-në tënde
+// ID-ja e videos në TikTok për intro (psh. '7370395460515155205')
+// Nëse nuk dëshironi ta shfaqni videon, lëreni stringun bosh.
+export const TIKTOK_VIDEO_ID = '7370395460515155205';
 
 // ==================================================================================
 //  UDHËZIME PËR MENAXHIM (MANUAL DATABASE)

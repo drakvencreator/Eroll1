@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -34,8 +35,6 @@ function App() {
             onOpenFullCatalog={() => navigateTo('products')} 
           />
           <Contact />
-          {/* Floating Video Intro for TikTok */}
-          <VideoIntro />
         </main>
       ) : (
         <main>
@@ -45,6 +44,9 @@ function App() {
            />
         </main>
       )}
+      
+      {/* Floating video intro component */}
+      <VideoIntro />
       
       <Footer />
     </div>
