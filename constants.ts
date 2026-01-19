@@ -31,9 +31,9 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: '4',
-    name: 'HKS Hi-Power Exhaust',
-    description: 'Sistem shkarkimi titanium për Toyota Supra MK4. Tingull agresiv dhe rritje kuaj-fuqie.',
-    imageUrl: 'https://images.unsplash.com/photo-1606577924004-6cb0b7e28b84?auto=format&fit=crop&q=80&w=800',
+    name: 'Stainless Steel Roll Bar',
+    description: 'Stainless Steel Roll Bar 4x4 është i ndërtuar nga çelik inox cilësor, duke ofruar qëndrueshmëri të lartë, rezistencë ndaj ndryshkut dhe një pamje moderne e sportive. I përshtatshëm për automjete 4x4, ky roll bar rrit sigurinë, funksionalitetin dhe stilin e mjetit tuaj, si për përdorim urban ashtu edhe off-road.',
+    imageUrl: 'https://i.ibb.co/Wp7qCnTS/H568a2b05377b41a9b0c6da2c691f5b0f-U.jpg',
   },
   {
     id: '5',
