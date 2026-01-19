@@ -47,6 +47,12 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Spring Leaf Mitsubishi L200 K77 është komponent thelbësor i sistemit të pezullimit, i projektuar për të ofruar qëndrueshmëri, kapacitet të lartë mbajtës dhe komoditet gjatë ngarkesës. I prodhuar nga çelik rezistent, siguron performancë të besueshme, jetëgjatësi dhe përshtatje të saktë për modelin Mitsubishi L200 K77, ideal për përdorim të përditshëm dhe kushte të vështira pune.',
     imageUrl: 'https://www.4x4parts.fi/40936-large_default/leaf-spring-rear-mitsubishi-l200.jpg',
   },
+  {
+    id: '7',
+    name: 'Track Control Arm Nissan Qashqai 2008',
+    description: 'Track Control Arm Nissan Qashqai 2008 siguron stabilitet optimal, kontroll të saktë të drejtimit dhe përmirëson performancën e pezullimit. I ndërtuar nga materiale të forta dhe rezistente ndaj konsumit, garanton qëndrueshmëri dhe jetëgjatësi të lartë. I projektuar për përshtatje të përkryer me Nissan Qashqai 2008, ky komponent kontribuon në siguri dhe komoditet maksimal gjatë vozitjes.',
+    imageUrl: 'https://scdn.autoteiledirekt.de/catalog/categories/500x500/200.png',
+  },
   // SHTO PRODUKTE TE REJA POSHTE KETIJ RRESHTI
   // {
   //   id: '7',
