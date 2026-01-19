@@ -3,6 +3,13 @@ import { Brand, Product } from './types';
 export const APP_VERSION = '1.0.0';
 
 // ==================================================================================
+//  TIKTOK INTRO VIDEO
+// ==================================================================================
+// Shko te videoja jote në TikTok dhe gjej ID-në (numrat në fund të linkut).
+// Psh: https://www.tiktok.com/@autojapan.erolli/video/73684123456789 -> ID është 73684123456789
+export const TIKTOK_VIDEO_ID = "7596453474850606347"; // Zëvendësoje këtë me ID-në tënde
+
+// ==================================================================================
 //  UDHËZIME PËR MENAXHIM (MANUAL DATABASE)
 // ==================================================================================
 // 1. Për të SHTUAR produkt: Kopjo një bllok {...} dhe ngjite poshtë, ndrysho ID dhe të dhënat.
@@ -59,13 +66,6 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Front Bumper Toyota 4Runner 1999–2002 është i projektuar për të ofruar mbrojtje të lartë dhe qëndrueshmëri maksimale në çdo terren. I ndërtuar nga materiale rezistente, garanton siguri, jetëgjatësi dhe përshtatje të saktë me modelin Toyota 4Runner. Dizajni i fortë dhe funksional përmirëson pamjen e automjetit dhe e bën ideal për përdorim off-road dhe të përditshëm.',
     imageUrl: 'https://i.ebayimg.com/images/g/06QAAOSwpp1cdJCI/s-l500.jpg',
   },
-  // SHTO PRODUKTE TE REJA POSHTE KETIJ RRESHTI
-  // {
-  //   id: '7',
-  //   name: 'Emri i Produktit',
-  //   description: 'Pershkrimi ketu...',
-  //   imageUrl: 'Linku i fotos ketu...',
-  // },
 ];
 
 export const CAR_BRANDS: Brand[] = [

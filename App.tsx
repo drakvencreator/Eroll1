@@ -6,6 +6,7 @@ import ProductSection from './components/ProductSection';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AllProductsPage from './components/AllProductsPage';
+import VideoIntro from './components/VideoIntro';
 import { INITIAL_PRODUCTS } from './constants';
 
 type ViewState = 'home' | 'products';
@@ -33,6 +34,8 @@ function App() {
             onOpenFullCatalog={() => navigateTo('products')} 
           />
           <Contact />
+          {/* Floating Video Intro for TikTok */}
+          <VideoIntro />
         </main>
       ) : (
         <main>
