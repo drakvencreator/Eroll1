@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ShieldCheck, Wrench, Zap } from 'lucide-react';
 import { CAR_BRANDS, PART_BRANDS } from '../constants';
@@ -64,7 +65,7 @@ const About: React.FC = () => {
 
         {/* Brands Section */}
         <div className="border-t border-neutral-800 pt-16">
-           <h3 className="font-aggressive text-4xl text-center text-white mb-16 italic">LEGJENDAT QË <span className="text-red-600 animate-pulse">FURNIZOJMË</span></h3>
+           <h3 className="font-aggressive text-4xl text-center text-white mb-16 italic">FURNIZUESIT <span className="text-red-600 animate-pulse">TANË JANË</span></h3>
            
            <div className="flex flex-wrap justify-center gap-6 mb-20">
              {CAR_BRANDS.map((brand, idx) => (

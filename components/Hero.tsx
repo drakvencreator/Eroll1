@@ -56,7 +56,8 @@ const Hero: React.FC = () => {
         CONTENT 
         ========================================
       */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-10 md:mt-0 flex flex-col justify-center h-full">
+      {/* Added pt-32 md:pt-40 to push content down from under the Navbar */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col justify-center h-full pt-32 md:pt-40">
         <div className="max-w-6xl">
           
           {/* Top Badge - Blinking Warning Style */}
