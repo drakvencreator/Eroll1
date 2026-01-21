@@ -64,6 +64,36 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Front Bumper Toyota 4Runner 1999–2002 është i projektuar për të ofruar mbrojtje të lartë dhe qëndrueshmëri maksimale në çdo terren. I ndërtuar nga materiale rezistente, garanton siguri, jetëgjatësi dhe përshtatje të saktë me modelin Toyota 4Runner. Dizajni i fortë dhe funksional përmirëson pamjen e automjetit dhe e bën ideal për përdorim off-road dhe të përditshëm.',
     imageUrl: 'https://i.ebayimg.com/images/g/06QAAOSwpp1cdJCI/s-l500.jpg',
   },
+  {
+    id: '9',
+    name: 'Radiator Motori për Nissan D40 (2007)',
+    description: 'Radiator motori i dizajnuar posaçërisht për Nissan D40 të vitit 2007. Siguron ftohje efikase të motorit, mban temperaturën stabile dhe parandalon mbinxehjen edhe në kushte të rënda pune.',
+    imageUrl: 'https://i.ebayimg.com/images/g/QQkAAeSw3~Vo1OQ3/s-l1600.webp',
+  },
+  {
+    id: '10',
+    name: 'Pompë Uji për Nissan Terrano 2 2.7D (2002)',
+    description: 'Pompë uji për Nissan Terrano 2 2.7D, viti 2002, e projektuar për qarkullim të saktë të ftohësit në motor. Siguron ftohje të qëndrueshme, parandalon mbinxehjen dhe mbron komponentët e motorit nga konsumimi i parakohshëm.',
+    imageUrl: 'https://www.euro4x4parts.com/cdn-cgi/image/format=webp,fit=cover,width=348/https://cdn.euro4x4parts.com/e4xmedia/prod/product/0/44242/id_33271_0/id_33271_0.png?q=aaffa76954f443aa3b2a0b591fa2f839',
+  },
+  {
+    id: '11',
+    name: 'Kokë Motori (Cylinder Head) për Nissan D40 (2007)',
+    description: 'Kokë motori për Nissan D40 të vitit 2007, e prodhuar për funksionim të saktë dhe rezistencë maksimale ndaj temperaturave dhe presionit të lartë. Siguron mbyllje perfekte të dhomës së djegies, performancë të qëndrueshme të motorit dhe efikasitet optimal.',
+    imageUrl: 'https://scdn.autodoc.de/catalog/categories/300x300/10480.png',
+  },
+  {
+    id: '12',
+    name: 'Shufër Qendrore Drejtimi (Central Rod) për Nissan Y61',
+    description: 'Shufër qendrore drejtimi për Nissan Y61, e projektuar për stabilitet dhe kontroll të saktë të timonit. Siguron transmetim korrekt të lëvizjes së drejtimit, zvogëlon lojën në timon dhe rrit sigurinë gjatë vozitjes, sidomos në terrene të vështira.',
+    imageUrl: 'https://scdn.autodoc.de/catalog/categories/300x300/15157.png',
+  },
+  {
+    id: '13',
+    name: 'Bllokues i Diferencialit të Përparmë 4x4 (Front 4x4 Lock)',
+    description: 'Bllokues diferenciali i përparmë 4x4, i dizajnuar për të rritur maksimalisht kapjen dhe kontrollin në terrene të vështira. Mundëson shpërndarje të barabartë të fuqisë në rrotat e përparme, duke përmirësuar ndjeshëm performancën në baltë, borë, rërë dhe terren off-road.',
+    imageUrl: 'https://i.ebayimg.com/images/g/7U4AAOSwR95hCnUJ/s-l1600.webp',
+  },
 ];
 
 export const CAR_BRANDS: Brand[] = [
