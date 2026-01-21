@@ -94,6 +94,54 @@ export const INITIAL_PRODUCTS: Product[] = [
     description: 'Bllokues diferenciali i përparmë 4x4, i dizajnuar për të rritur maksimalisht kapjen dhe kontrollin në terrene të vështira. Mundëson shpërndarje të barabartë të fuqisë në rrotat e përparme, duke përmirësuar ndjeshëm performancën në baltë, borë, rërë dhe terren off-road.',
     imageUrl: 'https://i.ebayimg.com/images/g/7U4AAOSwR95hCnUJ/s-l1600.webp',
   },
+  {
+    id: '14',
+    name: 'AVM (Free Wheel Hub) për Nissan Patrol Y61',
+    description: 'AVM për Nissan Patrol Y61, i projektuar për kyçje dhe çkyçje efikase të sistemit 4x4 në boshtin e përparmë. Mundëson kalim të sigurt mes 2WD dhe 4WD, redukton konsumimin e komponentëve dhe përmirëson kontrollin në terrene off-road.',
+    imageUrl: 'https://i.ebayimg.com/images/g/clsAAOSw~lpjNUZh/s-l1600.webp',
+  },
+   {
+    id: '15',
+    name: 'Set Kuplungu (Clutch Kit) për Nissan D40 2.5 dCi – AISIN',
+    description: 'Set kuplungu origjinal AISIN për Nissan D40 2.5 dCi, i ndërtuar për transmetim të saktë të fuqisë dhe ndërrim të butë të shpejtësive. Ofron kapje të fortë, rezistencë të lartë ndaj konsumimit dhe jetëgjatësi të madhe edhe nën ngarkesë të rëndë.',
+    imageUrl: 'https://a.allegroimg.com/s600/117d98/f18feb0a457bbb8ee9b6bea8ac6a/ZESTAW-SPRZEGLA-Z-KOLEM-NISSAN-NAVARA-D40-2-5-DCI-Typ-silnika-Diesel',
+  },
+   {
+    id: '16',
+    name: 'Nyje Universale (Universal Joint) për Mitsubishi Pajero (2001)',
+    description: 'Nyje universale për Mitsubishi Pajero, viti 2001, e projektuar për transmetim të qetë dhe të sigurt të fuqisë nga boshti drejtues. Redukton dridhjet, zhurmën dhe konsumimin e komponentëve të transmisionit, duke përmirësuar stabilitetin dhe jetëgjatësinë e sistemit të lëvizjes.',
+    imageUrl: 'https://tecdoc-s3.alpics.info/pics/201/DUJ-5501_3.JPG',
+  },
+   {
+    id: '17',
+    name: 'Parakolp i Pasëm për Nissan D40 – Krom',
+    description: 'Parakolp i pasëm krom për Nissan D40, i dizajnuar për mbrojtje dhe pamje premium. Ndërtim i fortë me veshje kromi rezistente ndaj ndryshkut dhe konsumimit, që i jep automjetit stil të pastër dhe profesional.',
+    imageUrl: 'https://i.ebayimg.com/images/g/9kUAAOSwykpknp~P/s-l1600.webp',
+  },
+   {
+    id: '18',
+    name: 'Set Rripi i Kohës (Timing Belt Set) për Ford Ranger 2.5 TDCi (2009)',
+    description: 'Set rripi i kohës për Ford Ranger 2.5 TDCi, viti 2009, i projektuar për sinkronizim të saktë të motorit dhe funksionim të sigurt afatgjatë. Siguron punë të qetë të motorit, parandalon dëmtime serioze dhe ruan performancën optimale.',
+    imageUrl: 'https://www.mpdonline.co.uk/userfiles/images/products/600x600/17a104ae654913e19f178d0e8c74df52.JPG',
+  },
+   {
+    id: '19',
+    name: 'Grilë e Përparme për Nissan Patrol Y60 – Krom',
+    description: 'Grilë e përparme krom për Nissan Patrol Y60, e dizajnuar për pamje elegante dhe mbrojtje të radiatorit. Ndërtim i fortë, rezistent ndaj ndikimeve dhe ndryshkut, me përfundim estetik të lartë që i jep automjetit një stil premium.',
+    imageUrl: 'https://scdn.autodoc.de/catalog/categories/300x300/11775.png',
+  },
+   {
+    id: '20',
+    name: 'Alternator për Mitsubishi L200 4D56 (2002)',
+    description: 'Alternator për Mitsubishi L200 me motor 4D56, viti 2002, i dizajnuar për furnizim të qëndrueshëm të energjisë elektrike në të gjitha sistemet e automjetit. Siguron karikim efikas të baterisë, mbrojt motorin elektrik dhe komponentët elektrikë nga variacionet e tensionit.',
+    imageUrl: 'https://i.ebayimg.com/images/g/jjwAAOSwXBNjnZkr/s-l1600.webp',
+  },
+   {
+    id: '21',
+    name: 'Motor Nisës (Starter) për Nissan D22 2.5 DI (2004)',
+    description: 'Starter për Nissan D22 2.5 DI, viti 2004, i projektuar për të siguruar ndezje të shpejtë dhe të besueshme të motorit. Siguron performancë të qëndrueshme edhe në kushte të vështira, ndërtim i fortë dhe jetëgjatësi të madhe.',
+    imageUrl: 'https://i.ebayimg.com/images/g/gKgAAOSwmjVfK3C6/s-l1600.webp',
+  },
 ];
 
 export const CAR_BRANDS: Brand[] = [
