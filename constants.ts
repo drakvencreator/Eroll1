@@ -128,7 +128,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     id: '19',
     name: 'Grilë e Përparme për Nissan Patrol Y60 – Krom',
     description: 'Grilë e përparme krom për Nissan Patrol Y60, e dizajnuar për pamje elegante dhe mbrojtje të radiatorit. Ndërtim i fortë, rezistent ndaj ndikimeve dhe ndryshkut, me përfundim estetik të lartë që i jep automjetit një stil premium.',
-    imageUrl: 'https://scdn.autodoc.de/catalog/categories/300x300/11775.png',
+    imageUrl: 'https://www.euro4x4parts.com/cdn-cgi/image/format=webp,fit=cover,width=348/https://cdn.euro4x4parts.com/e4xmedia/prod/product/0/194150/id_24495_0/id_24495_0.png?q=be13edb402d3aa8cea2ff288a48dfd71',
   },
    {
     id: '20',
